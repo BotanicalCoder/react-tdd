@@ -2,26 +2,38 @@ const { defineConfig } = require('cypress');
 
 module.exports = defineConfig({
   e2e: {
-    // Base URL of your dev server
-    // baseUrl: 'http://localhost:3000', // CRA
-    baseUrl: 'http://localhost:5173', // Vite
+    // Base URL of your dev server (Vite)
+    baseUrl: 'http://localhost:5173',
 
-    // Support file (optional, for custom commands)
+    // Support file
     supportFile: 'cypress/support/e2e.{js,ts}',
 
     // Spec pattern
-    specPattern: 'cypress/e2e/**/*.cy.{js,jsx,ts,tsx}',
+    specPattern: 'cypress/e2e/**/*.cy.spec.{js,jsx,ts,tsx}',
 
-    // Video recording (disable in CI to save space)
+    // Video recording
     video: true,
     videosFolder: 'cypress/videos',
 
     // Screenshots
     screenshotsFolder: 'cypress/screenshots',
 
+    // Viewport
+    viewportWidth: 1280,
+    viewportHeight: 720,
+
+    // Retry settings
+    retries: {
+      runMode: 2,   // CI
+      openMode: 0,  // Local
+    },
+
+    // Disable Chrome web security (useful for localhost/CORS testing)
+    chromeWebSecurity: false,
+
     // Setup node events (plugins)
     setupNodeEvents(on, config) {
-      // Example: Add custom task
+      // Custom task: log to terminal
       on('task', {
         log(message) {
           console.log(message);
@@ -29,53 +41,55 @@ module.exports = defineConfig({
         },
       });
 
-      // Auto-open DevTools + disable GPU in headless/CI
+      // FIXED: before:browser:launch for Cypress 13+ / 15+
       on('before:browser:launch', (browser, launchOptions) => {
-        // Works for Electron
-        if (browser.name === 'electron') {
-          launchOptions.preferences = launchOptions.preferences || [];
-          launchOptions.preferences.push({
-            devTools: true, // Auto-open DevTools in Electron
-          });
-        }
+        // Optional: debug what browser is launching
+        // console.log('Launching browser:', browser.name, browser.family);
 
-        // Works for Chrome, Edge, etc.
+        // ── Chromium-based browsers (Chrome, Edge, Brave, etc.) ──
         if (browser.family === 'chromium' && browser.name !== 'electron') {
+          // Auto-open DevTools in real Chrome
           launchOptions.args.push('--auto-open-devtools-for-tabs');
-        }
 
-        // Optional: Safe defaults for Linux/Docker
-        if (browser.name === 'chrome' || browser.name === 'electron') {
+          // Safe & recommended flags (especially in Docker/CI)
           launchOptions.args.push('--disable-gpu');
           launchOptions.args.push('--no-sandbox');
-          launchOptions.args.push('--disable-dev-shm-usage'); // Helps in Docker
+          launchOptions.args.push('--disable-dev-shm-usage');
+          launchOptions.args.push('--disable-features=ImprovedCookieControls');
+        }
+
+        // ── Electron (Cypress built-in browser) ──
+        if (browser.name === 'electron') {
+          // Electron uses a plain object for preferences (not an array!)
+          launchOptions.preferences.devTools = true;     // Auto-open DevTools
+          launchOptions.preferences.width = 1280;
+          launchOptions.preferences.height = 720;
+          launchOptions.preferences.resizable = true;
+
+          // Optional: disable GPU in Electron too
+          launchOptions.args.push('--disable-gpu');
+        }
+
+        // ── Firefox (if you ever use it) ──
+        if (browser.family === 'firefox') {
+          // Opens DevTools on start
+          launchOptions.preferences['devtools.toolbox.selectedTool'] = 'inspector';
+          launchOptions.preferences['devtools.toolbox.footer.height'] = 500;
         }
 
         return launchOptions;
       });
 
+      // Return modified config (important!)
       return config;
     },
-
-    // Viewport (mobile-first or desktop)
-    viewportWidth: 1280,
-    viewportHeight: 720,
-
-    // Retry settings (optional)
-    retries: {
-      runMode: 2, // CI
-      openMode: 0, // Local
-    },
-
-    // Disable Chrome web security if testing CORS/localhost
-    chromeWebSecurity: false,
   },
 
-  // Optional: Component testing (if you use it)
+  // Component testing config (React + Vite)
   component: {
     devServer: {
       framework: 'react',
-      bundler: 'vite', // or 'webpack'
+      bundler: 'vite',
     },
   },
 });
