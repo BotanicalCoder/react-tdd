@@ -15,4 +15,5 @@ module.exports = {
     '\\.(gif|ttf|eot|svg|png)$': '<rootDir>/__mocks__/fileMock.js',
   },
   collectCoverageFrom: ['app/**/*.{ts,tsx}', '!app/**/*.d.ts'],
+  testPathIgnorePatterns: ['/node_modules/', '/cypress/'],
 };
