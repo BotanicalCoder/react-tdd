@@ -11,6 +11,7 @@ module.exports = {
     '**/?(*.)+(spec|test).?(m)ts?(x)',
   ],
   moduleNameMapper: {
+    '^~/(.*)$': '<rootDir>/app/$1',
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
     '\\.(gif|ttf|eot|svg|png)$': '<rootDir>/__mocks__/fileMock.js',
   },

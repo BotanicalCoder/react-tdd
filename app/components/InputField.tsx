@@ -11,7 +11,8 @@ const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
     return (
       <div className="flex flex-col gap-1 mb-4">
         <label 
-          htmlFor={label || props.name} 
+          htmlFor={props.id || props.name} 
+          aria-labelledby={label||props.name}
           className="text-sm font-semibold text-gray-700"
         >
           {label}
@@ -27,6 +28,8 @@ const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
             }
             ${className}
           `}
+          id={props.id||props.name}
+          disabled={props.disabled ?? false}
           {...props} 
         />
 
