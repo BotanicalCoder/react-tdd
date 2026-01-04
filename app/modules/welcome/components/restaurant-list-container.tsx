@@ -15,8 +15,10 @@ export function RestaurantListContainer (){
             Add Restaurant
         </Button>
 
-        <NewRestaurantForm onSave={(restaurant:string)=>{
-            setRestaurantList(prevState=>[...prevState, restaurant])
+        <NewRestaurantForm onSave={(restaurant:{
+  newRestaurantName: string;
+})=>{
+            setRestaurantList(prevState=>[...prevState, restaurant.newRestaurantName])
         }}/>
 
         <RestaurantList restaurants= {restaurantList} />

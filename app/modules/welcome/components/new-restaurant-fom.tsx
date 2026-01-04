@@ -7,7 +7,7 @@ type FormValues = {
   newRestaurantName: string;
 };
 
-export function NewRestaurantForm ({onSave}:{onSave:(data: string)=>void}){
+export function NewRestaurantForm ({onSave}:{onSave:(data: FormValues)=>void}){
    const { 
         register, 
         handleSubmit, 
@@ -15,7 +15,7 @@ export function NewRestaurantForm ({onSave}:{onSave:(data: string)=>void}){
       } = useForm<FormValues>(); 
 
       const onSubmit = (data: FormValues) => {
-        onSave(data.newRestaurantName); 
+        onSave(data); 
     };
 
     return <form onSubmit={handleSubmit(onSubmit)}>
