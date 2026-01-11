@@ -1,44 +1,79 @@
+'use client';
+
 import React, { forwardRef } from 'react';
 import { FieldError } from 'react-hook-form';
 
-interface InputFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
+import {
+  Field,
+  FieldDescription,
+  FieldLabel,
+  FieldError as ShadcnFieldError,
+} from './ui/field';
+import { Input } from './ui/input';
+import { cn } from '~/lib/utils';
+
+export interface InputFieldProps
+  extends React.InputHTMLAttributes<HTMLInputElement> {
   label: string;
-  error?: FieldError; 
+  description?: string;
+  error?: FieldError;
+  labelClassName?: string;
+  containerClassName?: string;
 }
 
 const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
-  ({ label, error, className, ...props }, ref) => {
+  (
+    {
+      label,
+      description,
+      error,
+      className,
+      labelClassName,
+      containerClassName,
+      id,
+      name,
+      ...props
+    },
+    ref
+  ) => {
+    const inputId = id || name;
+
     return (
-      <div className="flex flex-col gap-1 mb-4">
-        <label 
-          htmlFor={props.id || props.name} 
-          aria-labelledby={label||props.name}
-          className="text-sm font-semibold text-gray-700"
+      <Field className={cn('w-full', containerClassName)}>
+        <FieldLabel
+          htmlFor={inputId}
+          className={cn('text-sm font-medium', labelClassName)}
         >
           {label}
-        </label>
+        </FieldLabel>
 
-        <input
-          ref={ref} 
-          className={`
-            px-3 py-2 border rounded-md focus:outline-none focus:ring-2
-            ${error 
-              ? 'border-red-500 focus:ring-red-200' 
+        {description && !error && (
+          <FieldDescription className="text-xs text-muted-foreground mt-0.5 mb-1.5">
+            {description}
+          </FieldDescription>
+        )}
+
+        <Input
+          ref={ref}
+          id={inputId}
+          name={name}
+          className={cn(
+            error && 'border-destructive focus-visible:ring-destructive/30',
+            className,
+             error ? 'border-red-500 focus:ring-red-200' 
               : 'border-gray-300 focus:ring-blue-200'
-            }
-            ${className}
-          `}
-          id={props.id||props.name}
-          disabled={props.disabled ?? false}
-          {...props} 
+          )}
+          aria-invalid={!!error}
+          aria-describedby={error ? `${inputId}-error` : undefined}
+          {...props}
         />
 
-        {error && (
-          <span className="text-xs text-red-500 mt-1" role="alert">
-            {error.message}
-          </span>
-        )}
-      </div>
+        {error && <ShadcnFieldError
+         id={`${inputId}-error`}
+            className="text-xs font-medium text-destructive mt-1.5 "
+            role="alert"
+        >{error.message}</ShadcnFieldError>}
+      </Field>
     );
   }
 );

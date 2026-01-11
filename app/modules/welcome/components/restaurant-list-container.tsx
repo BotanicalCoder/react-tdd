@@ -6,20 +6,24 @@ import { RestaurantList } from "./restaurant-list";
 export function RestaurantListContainer (){
 
     const [restaurantList, setRestaurantList] = useState<string[]>([])
+    const [showNewRestaurantForm, setShowNewRestaurantForm] = useState(false)
+    const handleShowNewRestaurantForm = ()=>{
+            setShowNewRestaurantForm(true)
+    }
 
-
-    return <div>
+    return <div className="w-full mx-auto container" >
         <Button
         data-test="addRestaurantButton"
+        onClick={handleShowNewRestaurantForm}
         >
             Add Restaurant
         </Button>
 
-        <NewRestaurantForm onSave={(restaurant:{
-  newRestaurantName: string;
-})=>{
-            setRestaurantList(prevState=>[...prevState, restaurant.newRestaurantName])
-        }}/>
+    {  showNewRestaurantForm &&  <NewRestaurantForm onSave={(restaurant:{
+            newRestaurantName: string;
+            })=>{
+                        setRestaurantList(prevState=>[...prevState, restaurant.newRestaurantName])
+        }}/>}
 
         <RestaurantList restaurants= {restaurantList} />
     </div>

@@ -1,8 +1,8 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import InputField from '../InputField';
 import { FieldError } from 'react-hook-form';
+import InputField from '../InputField';
 
 describe('InputField Component', () => {
   it('renders the label and input associated correctly', () => {

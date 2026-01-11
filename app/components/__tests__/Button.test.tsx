@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import Button from '../Button';
+import { Button } from '../ui/button';
+// import Button from '../Button';
 
 test('renders and responds to click', async () => {
   const handle = jest.fn();
