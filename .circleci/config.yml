@@ -1,23 +1,14 @@
 version: 2.1
+
 orbs:
-  # "cypress-io/cypress@6" installs the latest published
-  # version "s.x.y" of the orb. We recommend you then use
-  # the strict explicit version "cypress-io/cypress@6.x.y"
-  # to lock the version and prevent unexpected CI changes
   cypress: cypress-io/cypress@6
+
 workflows:
   build:
     jobs:
-      - cypress/run: # "run" job comes from "cypress" orb
-          start-command: 'npm run start'
-jobs:
-  build-and-test:
-    docker:
-      - image: cimg/node:16.10
-    steps:
-      - checkout
-      - node/install-packages:
-          pkg-manager: npm
-      - run:
-          name: Run tests
-          command: npm test
+      - cypress/run:
+          install-command: npm ci
+          start-command: npm run dev -- --host 0.0.0.0 --port 5173
+          wait-on: 'http://localhost:5173'
+          wait-on-timeout: '120'
+          cypress-command: npm run e2e
