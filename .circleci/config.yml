@@ -9,6 +9,4 @@ workflows:
       - cypress/run:
           install-command: npm ci
           start-command: npm run dev -- --host 0.0.0.0 --port 5173
-          wait-on: 'http://localhost:5173'
-          wait-on-timeout: '120'
           cypress-command: npm run e2e
