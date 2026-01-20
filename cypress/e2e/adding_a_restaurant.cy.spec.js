@@ -4,6 +4,8 @@ describe('adding a restaurant', () => {
 
     cy.visit('http://localhost:5173');
 
+    cy.get('[data-test="hydrated"]').should('exist');
+
     cy.get('[data-test="newRestaurantName"]').should('not.exist');
 
     cy.get('[data-test="addRestaurantButton"]').should('be.visible').click();

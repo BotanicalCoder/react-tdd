@@ -21,8 +21,13 @@ export function NewRestaurantForm({
     onSave(data);
   };
 
+  const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    handleSubmit(onSubmit)(e);
+  };
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleFormSubmit}>
       <InputField
         type="text"
         label="new restaurant name"
