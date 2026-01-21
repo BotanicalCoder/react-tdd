@@ -1,7 +1,6 @@
 talk about setting up circle ci then setting e2e tests with cypress
 then talk about setting up a husky to 1. run the test and do a build before commit and only commit after the e2e test and unit and intgration tests are successful
 
-
 while setting up my circleci I discovered that my cypress test was failing, but well would fix it, shout out to circle ci
 
 also while setting my circle ci I made a mistake in the config.yml file and the ai helped fix that
@@ -13,4 +12,30 @@ I used the cypress orb, created the .circleci folder with the config.yml file in
 had an issue with getting the tests to pass on circle ci even if it was passing locally, it was a hydration issue, added a hydration check before the tests runs
 
 Next I will be setting up husjy and using that to add another layer of testing locally before the pr is evn made
+
+
+We want Git to automatically run checks before you commit/push:
+
+- Before commit: run build + unit tests (and previously e2e too)
+- Before push: run e2e tests
+- If anything fails → stop the commit/push
+
+That’s exactly what Husky is for: it runs scripts at Git hook points.
+
+We installed Husky as a dev dependency;so Git hooks can run commands.
+
+Made a couple of updates to the packge.json file, added the prepare script and installed start-server-and-test to help with the e2e tests, modified the e2e test script to start the dev server before cypress runs.
+
+created the hooks 
+
+* .husky/pre-commit (runs before commits) ( this contains the command to build and run the unit tests)
+* .husky/pre-push (runs before pushes) ( this contains the command to run the e2e tests)
+
+
+We made the hook executable
+
+My key take awayv from this is 
+- Husky hooks are just scripts Git runs automatically.
+- If a script exits with an error → Git blocks the commit/push.
+- Cypress needs a running server → so the e2e script must start one.
 
