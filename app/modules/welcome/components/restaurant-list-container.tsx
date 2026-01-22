@@ -6,31 +6,25 @@ import { RestaurantList } from "./restaurant-list";
 export function RestaurantListContainer() {
   const [restaurantList, setRestaurantList] = useState<string[]>([]);
   const [showNewRestaurantForm, setShowNewRestaurantForm] = useState(false);
-  const handleShowNewRestaurantForm = () => {
-    setShowNewRestaurantForm(true);
-  };
 
   return (
     <div className="w-full mx-auto container">
       <Button
         type="button"
         data-test="addRestaurantButton"
-        onClick={handleShowNewRestaurantForm}
+        onClick={() => setShowNewRestaurantForm(true)}
       >
         Add Restaurant
       </Button>
 
-      {showNewRestaurantForm && (
-        <NewRestaurantForm
-          onSave={(restaurant: { newRestaurantName: string }) => {
-            setRestaurantList((prevState) => [
-              ...prevState,
-              restaurant.newRestaurantName,
-            ]);
-            setShowNewRestaurantForm(false);
-          }}
-        />
-      )}
+      <NewRestaurantForm
+        open={showNewRestaurantForm}
+        onClose={() => setShowNewRestaurantForm(false)}
+        onSave={(restaurant: { newRestaurantName: string }) => {
+          setRestaurantList((prev) => [...prev, restaurant.newRestaurantName]);
+          setShowNewRestaurantForm(false);
+        }}
+      />
 
       <RestaurantList restaurants={restaurantList} />
     </div>
