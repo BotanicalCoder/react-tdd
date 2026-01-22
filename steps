@@ -1,7 +1,6 @@
 talk about setting up circle ci then setting e2e tests with cypress
 then talk about setting up a husky to 1. run the test and do a build before commit and only commit after the e2e test and unit and intgration tests are successful
 
-
 while setting up my circleci I discovered that my cypress test was failing, but well would fix it, shout out to circle ci
 
 also while setting my circle ci I made a mistake in the config.yml file and the ai helped fix that
@@ -9,5 +8,7 @@ also while setting my circle ci I made a mistake in the config.yml file and the 
 to setup circle ci, I had to create an account used github and it was pretty easy, next I created a project, connected it to my gihub and then the setup was somplete
 
 I used the cypress orb, created the .circleci folder with the config.yml file in my project
+
+had an issue with getting the tests to pass on circle ci even if it was passing locally, it was a hydration issue, added a hydration check before the tests runs
 
 Next I will be setting up husjy and using that to add another layer of testing locally before the pr is evn made
