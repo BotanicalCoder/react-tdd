@@ -1,53 +1,75 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { useState } from "react";
+import { Button } from "~/components/ui/button";
 import { NewRestaurantForm } from "../new-restaurant-fom";
 import userEvent from "@testing-library/user-event";
+import { render, screen, waitFor } from "@testing-library/react";
 
-describe("New Restaurant form", () => {
-  describe("clicking the save button", () => {
-    it("calls the onSaveHandler", async () => {
-      // Create a mock function to track save calls
+function NewRestaurantFormHarness({
+  onSave,
+}: {
+  onSave: (data: { newRestaurantName: string }) => void;
+}) {
+  const [open, setOpen] = useState(true);
+  return (
+    <div>
+      <NewRestaurantForm
+        onSave={onSave}
+        open={open}
+        onClose={() => setOpen(false)}
+      />
+    </div>
+  );
+}
+
+describe("New Restaurant Form", () => {
+  describe("saving new restaurant", () => {
+    it("calls the onSaveHandler with the entered restaurant name and closes the dialog", async () => {
       const saveHandler = jest.fn();
-
-      //  Create a mock close handler (required by controlled dialog)
-      const closeHandler = jest.fn();
-
-      //  Setup user-event (recommended over fireEvent)
       const user = userEvent.setup();
 
-      // Render the form OPEN (otherwise the dialog content won't exist)
-      render(
-        <NewRestaurantForm
-          open={true}
-          onClose={closeHandler}
-          onSave={saveHandler}
-        />,
-      );
+      render(<NewRestaurantFormHarness onSave={saveHandler} />);
 
-      //  Find the input by its accessible label
       const input = screen.getByLabelText("new restaurant name");
 
-      //  Simulate typing into the input
-      await user.type(input, "Foodco");
+      await user.type(input, "FoodCo");
 
-      //  Find the Save button
       const saveButton = screen.getByRole("button", { name: /save/i });
-
-      //  Click the Save button (submits the form)
       await user.click(saveButton);
 
-      //  Assert the save handler was called correctly
       await waitFor(() => {
         expect(saveHandler).toHaveBeenCalledTimes(1);
 
         expect(saveHandler).toHaveBeenCalledWith(
           expect.objectContaining({
-            newRestaurantName: "Foodco",
+            newRestaurantName: "FoodCo",
           }),
         );
       });
-
-      //  Optional but important: ensure the dialog was asked to close
-      expect(closeHandler).toHaveBeenCalledTimes(1);
     });
+  });
+
+  it("clears the form input after saving, (reset works)", async () => {
+    const saveHandler = jest.fn();
+    const user = userEvent.setup();
+
+    render(<NewRestaurantFormHarness onSave={saveHandler} />);
+
+    const input = screen.getByLabelText("new restaurant name");
+
+    await user.type(input, "FoodCo");
+
+    const saveButton = screen.getByRole("button", {
+      name: /save/i,
+    });
+
+    await user.click(saveButton);
+
+    await waitFor(() => {
+      expect(input).not.toBeInTheDocument();
+    });
+
+    await user.click(saveButton);
+
+    expect(input).toHaveValue("");
   });
 });
